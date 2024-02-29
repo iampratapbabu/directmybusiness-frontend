@@ -1,10 +1,39 @@
-import logo from './logo.svg';
 import './App.css';
+import { Routes, Route, Link, Navigate } from 'react-router-dom';
 
-function App() {
+const App = () => {
+
+  let a = 5;
+
+  let isLoggedIn = true;
+
+
   return (
     <>
-      <p>Direct my business</p>
+      {
+        isLoggedIn ? (
+          <>
+            <Routes>
+              <Route path="/">
+
+              </Route>
+
+            </Routes>
+
+          </>
+        ) : (
+          <>
+            <Routes>
+              <Route path="/">
+
+              </Route>
+
+            </Routes>
+
+          </>
+
+        )
+      }
     </>
   );
 }
