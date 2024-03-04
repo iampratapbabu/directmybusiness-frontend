@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 
 const Header = () => {
   return (
@@ -207,7 +208,7 @@ const Header = () => {
                 <li>
                   <a class="dropdown-item d-flex align-items-center" href="login.html">
                     <i class="bi bi-box-arrow-right"></i>
-                    <span>Sign Out</span>
+                    <Link to = "/login"><span>Sign Out</span></Link>
                   </a>
                 </li>
 
