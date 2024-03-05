@@ -1,7 +1,23 @@
-import React from 'react'
-import { Link } from 'react-router-dom';
+import React, { useContext } from 'react'
+import { Link, useNavigate } from 'react-router-dom';
+import DContext from '../../context/DContext';
 
 const Login = () => {
+    const navigate = useNavigate();
+
+    const {authState,authDispatch,login,logout} = useContext(DContext);
+    const {user} = authState;
+
+
+    const handleSubmit = (e) =>{
+        e.preventDefault();
+        console.log("clicked");
+        authDispatch({type:"LOGIN",payload:null});
+        navigate("/");
+        
+    }
+
+
     return (
         <>
             <div class="auth_login">
@@ -25,14 +41,14 @@ const Login = () => {
                         </div>
                         <div class="flex50">
                             <div class="auth_right">
-                                <form method="post" class="login_form" enctype="multipart/form-data">
+                                <form onSubmit = {handleSubmit} class="login_form" enctype="multipart/form-data">
                                     <div class="login_form_inner">
                                         <div class="form_title">
                                             <h3>Login Account</h3>
                                         </div>
                                         <div class="form-group">
                                             <div class="form-floating">
-                                                <input type="email" class="form-control" id="loginemail" placeholder="Email" value="Prashant Mishra" />
+                                                <input type="text" class="form-control" id="loginemail" placeholder="Email" value="Prashant Mishra" />
                                                 <label for="loginemail">Email</label>
                                             </div>
                                         </div>
@@ -50,7 +66,7 @@ const Login = () => {
                                             </div>
                                             <div class="form_pass">
                                                 {/* <button id="login"  type="submit" class="btn submit-btn">Login</button> */}
-                                                <Link to="" class="btn submit-btn">Login</Link>
+                                                <button type='submit' class="btn submit-btn">Login</button>
                                             </div>
                                         </div>
                                     </div>
