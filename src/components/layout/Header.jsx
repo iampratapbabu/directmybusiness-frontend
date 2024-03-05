@@ -1,10 +1,22 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { useContext } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import DContext from '../../context/DContext'
 
 const Header = () => {
+  const navigate = useNavigate();
+
+  const {authState,authDispatch, logout} = useContext(DContext);
+  const {user} = authState;
+
+
+  const handlelogout = () =>{
+    logout();
+    authDispatch({type:"LOGOUT",payload:null})
+    navigate('/login');
+  }
+
   return (
     <>
-      {/* <!--======= START HEADER ======= --> */}
       <header id="header" class="header fixed-top d-flex align-items-center">
 
         <div class="d-flex align-items-center justify-content-between">
@@ -162,23 +174,23 @@ const Header = () => {
 
               <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
                 <img src="./assets/images/profile-img.jpg" alt="Profile" class="rounded-circle"/>
-                  <span class="d-none d-md-block dropdown-toggle ps-2">Prashant Mishra</span>
+                  <span class="d-none d-md-block dropdown-toggle ps-2">Admin</span>
               </a>
 
               <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
                 <li class="dropdown-header">
-                  <h6>Prashant Mishra</h6>
-                  <span>Web Designer</span>
+                  <h6>Admin</h6>
+                  <span>Full Access</span>
                 </li>
                 <li>
                   <hr class="dropdown-divider"/>
                 </li>
 
                 <li>
-                  <a class="dropdown-item d-flex align-items-center" href="profile.html">
+                  <Link to="/profile" class="dropdown-item d-flex align-items-center">
                     <i class="bi bi-person"></i>
-                    <span>My Profile</span>
-                  </a>
+                   <span>My Profile</span>
+                  </Link>
                 </li>
                 <li>
                   <hr class="dropdown-divider"/>
@@ -208,7 +220,7 @@ const Header = () => {
                 <li>
                   <a class="dropdown-item d-flex align-items-center" href="login.html">
                     <i class="bi bi-box-arrow-right"></i>
-                    <Link to = "/login"><span>Sign Out</span></Link>
+                    <Link onClick={handlelogout}><span>Sign Out</span></Link>
                   </a>
                 </li>
 
@@ -219,113 +231,7 @@ const Header = () => {
         </nav>
 
       </header>
-      {/* <!-- ======= END HEADER ======= --> */}
-
-      {/* <!-- ======= START SIDEBAR ======= --> */}
-      <aside id="sidebar" class="sidebar">
-
-        <ul class="sidebar-nav" id="sidebar-nav">
-          <li class="nav-item">
-            <a class="nav-link " href="index.html">
-              <i class="bi bi-grid"></i>
-              <span>Dashboard</span>
-            </a>
-          </li>
-
-          <li class="nav-item">
-            <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
-              <i class="bi bi-lock"></i><span>Admin</span><i class="bi bi-chevron-down ms-auto"></i>
-            </a>
-            <ul id="components-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-              <li>
-                <a href="#">
-                  <i class="bi bi-circle"></i><span>Pages List</span>
-                </a>
-              </li>
-              <li>
-                <a href="#">
-                  <i class="bi bi-circle"></i><span>Admin 1</span>
-                </a>
-              </li>
-              <li>
-                <a href="#">
-                  <i class="bi bi-circle"></i><span>Admin 2</span>
-                </a>
-                </li>
-            </ul>
-          </li>
-
-          <li class="nav-item">
-            <a class="nav-link collapsed" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
-              <i class="bi bi-journal-text"></i><span>Forms</span><i class="bi bi-chevron-down ms-auto"></i>
-            </a>
-            <ul id="forms-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-              <li>
-                <a href="edit-forms-layout.html">
-                  <i class="bi bi-circle"></i><span>Edit Form Layouts</span>
-                </a>
-              </li>
-              <li>
-                <a href="forms-layout.html">
-                  <i class="bi bi-circle"></i><span>Form Layouts</span>
-                </a>
-              </li>
-            </ul>
-          </li>
-
-          <li class="nav-item">
-            <a class="nav-link collapsed" data-bs-target="#tables-nav" data-bs-toggle="collapse" href="#">
-              <i class="bi bi-layout-text-window-reverse"></i><span>Tables</span><i class="bi bi-chevron-down ms-auto"></i>
-            </a>
-            <ul id="tables-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-              <li>
-                <a href="tables-data.html">
-                  <i class="bi bi-circle"></i><span>Data Tables</span>
-                </a>
-              </li>
-            </ul>
-          </li>
-          {/* <!-- End Tables Nav --> */}
-
-          <li class="nav-item">
-            <a class="nav-link collapsed" data-bs-target="#charts-nav" data-bs-toggle="collapse" href="#">
-              <i class="bi bi-bar-chart"></i><span>Charts</span><i class="bi bi-chevron-down ms-auto"></i>
-            </a>
-            <ul id="charts-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-              <li>
-                <a href="charts.html">
-                  <i class="bi bi-circle"></i><span>Chart</span>
-                </a>
-              </li>
-              <li>
-                <a href="rich-editor.html">
-                  <i class="bi bi-circle"></i><span>Rich Editor</span>
-                </a>
-              </li>
-            </ul>
-          </li>
-          
-          {/* <!-- End Charts Nav --> */}
-
-          <li class="nav-heading">Pages</li>
-
-          <li class="nav-item">
-            <a class="nav-link collapsed" href="profile.html">
-              <i class="bi bi-person"></i>
-              <span>Profile</span>
-            </a>
-          </li>
-
-          <li class="nav-item">
-            <a class="nav-link collapsed" href="faq.html">
-              <i class="bi bi-question-circle"></i>
-              <span>F.A.Q</span>
-            </a>
-          </li>
-        </ul>
-
-      </aside>
-      {/* <!-- End Sidebar--> */}
+ 
     </>
   )
 }
