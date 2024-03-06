@@ -1,9 +1,11 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import Chart from "react-apexcharts";
 
 
 const Homepage = () => {
+
+  const [searchParams, setSearchParams] = useSearchParams();
 
   let chartstate = {
     options: {
@@ -28,6 +30,10 @@ const Homepage = () => {
     labels: ['A', 'B', 'C', 'D', 'E']
   }
 
+  useEffect(()=>{
+    let url = "http://localhost:3000/?q=thisis";
+    console.log(searchParams.get('q')); //=>thisis
+  },[])
 
   return (
 

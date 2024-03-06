@@ -197,20 +197,20 @@ const Header = () => {
                 </li>
 
                 <li>
-                  <a class="dropdown-item d-flex align-items-center" href="profile.html">
+                  <Link to="/profile" class="dropdown-item d-flex align-items-center">
                     <i class="bi bi-gear"></i>
                     <span>Account Settings</span>
-                  </a>
+                  </Link>
                 </li>
                 <li>
                   <hr class="dropdown-divider"/>
                 </li>
 
                 <li>
-                  <a class="dropdown-item d-flex align-items-center" href="#">
+                  <Link to="/faq" class="dropdown-item d-flex align-items-center">
                     <i class="bi bi-question-circle"></i>
                     <span>Need Help?</span>
-                  </a>
+                  </Link>
                 </li>
 
                 <li>
@@ -218,10 +218,10 @@ const Header = () => {
                 </li>
 
                 <li>
-                  <a class="dropdown-item d-flex align-items-center" href="login.html">
+                  <Link class="dropdown-item d-flex align-items-center">
                     <i class="bi bi-box-arrow-right"></i>
                     <Link onClick={handlelogout}><span>Sign Out</span></Link>
-                  </a>
+                  </Link>
                 </li>
 
               </ul>

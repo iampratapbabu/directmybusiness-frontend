@@ -12,6 +12,7 @@ const Login = () => {
     const handleSubmit = (e) =>{
         e.preventDefault();
         console.log("clicked");
+        localStorage.setItem('token',"thisisiaccessjwttoken")
         authDispatch({type:"LOGIN",payload:null});
         navigate("/");
         

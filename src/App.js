@@ -13,6 +13,7 @@ import Sites from './pages/Sites';
 import Leads from './pages/Leads';
 import Revenue from './pages/Revenue';
 import Faq from './pages/user/Faq';
+import Demopage from './pages/Demopage';
 
 const App = () => {
 
@@ -64,6 +65,7 @@ const App = () => {
                 <Route path="sites" element={<Sites />} />
                 <Route path="leads" element={<Leads />} />
                 <Route path="revenue" element={<Revenue />} />
+                <Route path="demo/:demoid" element={<Demopage />} />
                 <Route path="*" element={<Navigate to="" replace />} />
               </Route>
 
