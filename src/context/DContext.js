@@ -1,7 +1,7 @@
 import React, { useReducer, useEffect } from 'react';
 import axios from 'axios';
 import { BASE_URL } from '../config';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 
 
 //auth
@@ -15,6 +15,9 @@ export const DContext = React.createContext();
 
 export const DProvider = (props) => {
     const navigate = useNavigate();
+    const location = useLocation();
+    const [searchParams, setSearchParams] = useSearchParams();
+
 
     const [authState, authDispatch] = useReducer(authReducer, initialAuthState);
 
@@ -26,11 +29,18 @@ export const DProvider = (props) => {
     }, [])
 
     const loadUser = () => {
+        let redirecturl = location.pathname.substring(1);
         let token = localStorage.getItem('token');
         if (!token) {
             console.log("No token found logging out");
             authDispatch({ type: "LOGOUT" });
-            navigate('/login?customparam=thisiscustomparam');
+            if(!(location.pathname.includes('login'))){
+                console.log(`full url created /login?redirecturl=${redirecturl}`);
+                navigate(`/login?redirecturl=${redirecturl}`);
+            }else{
+                console.log("simple login");
+                navigate('/login')
+            }
             return false;
         }else{
             let user = {

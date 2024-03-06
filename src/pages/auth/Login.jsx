@@ -1,9 +1,11 @@
-import React, { useContext } from 'react'
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useContext, useEffect } from 'react'
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import DContext from '../../context/DContext';
 
 const Login = () => {
     const navigate = useNavigate();
+    //const {redirecturl} = useParams();
+    const [searchParams, setSearchParams] = useSearchParams();
 
     const {authState,authDispatch,login,logout} = useContext(DContext);
     const {user} = authState;
@@ -14,9 +16,23 @@ const Login = () => {
         console.log("clicked");
         localStorage.setItem('token',"thisisiaccessjwttoken")
         authDispatch({type:"LOGIN",payload:null});
-        navigate("/");
+        redirectRoute();
         
     }
+
+    const redirectRoute =() =>{
+        let redirectUrl = searchParams.get('redirecturl')
+        if(redirectUrl !== null){
+            console.log("redirect url found",redirectUrl);
+            navigate(`/${redirectUrl}`);
+        }else{
+            navigate("/");
+        }
+    }
+
+    useEffect(()=>{
+
+    },[])
 
 
     return (
