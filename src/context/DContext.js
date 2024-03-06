@@ -14,7 +14,7 @@ export const DContext = React.createContext();
 
 
 export const DProvider = (props) => {
-    const Navigate = useNavigate();
+    const navigate = useNavigate();
 
     const [authState, authDispatch] = useReducer(authReducer, initialAuthState);
 
@@ -26,7 +26,20 @@ export const DProvider = (props) => {
     }, [])
 
     const loadUser = () => {
-        console.log("load user runs")
+        let token = localStorage.getItem('token');
+        if (!token) {
+            console.log("No token found logging out");
+            authDispatch({ type: "LOGOUT" });
+            navigate('/login?customparam=thisiscustomparam');
+            return false;
+        }else{
+            let user = {
+                name:"Tej Pratap",
+                role:"admin"
+            }
+            authDispatch({ type: "USER_LOADED", payload: user });
+
+        }
     }
 
     return (
