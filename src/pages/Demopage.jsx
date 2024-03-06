@@ -7,7 +7,7 @@ const Demopage = () => {
 
     return (
         <>
-              <PageTitleAndSnackBar pageTitle="Demopage" />
+              <PageTitleAndSnackBar pageTitle={demoid} />
 
             <h1>{demoid}</h1>
 

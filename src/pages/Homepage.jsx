@@ -1,10 +1,19 @@
 import React, { useEffect } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import Chart from "react-apexcharts";
 import PageTitleAndSnackBar from '../components/common/PageTitleAndSnackBar';
 
 
 const Homepage = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  let { q } = useParams();
+
+ //we can access window object directly in react
+  const url = window.location.href;
+  const pathname = window.location.pathname;
+  const protocol = window.location.protocol;
+  const hostname = window.location.hostname;
 
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -32,8 +41,10 @@ const Homepage = () => {
   }
 
   useEffect(() => {
-    let url = "http://localhost:3000/?q=thisis";
-    console.log(searchParams.get('q')); //=>thisis
+    // let url = "http://localhost:3000/?q=thisis";
+    // console.log(searchParams.get('q')); //=>thisis
+    // console.log(location);
+    // console.log(pathname)
   }, [])
 
   return (
