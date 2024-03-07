@@ -24,7 +24,7 @@ export const DProvider = (props) => {
 
 
     useEffect(() => {
-        console.log("Dcontext runs with api", BASE_URL);
+        console.log("Dcontext started with api", BASE_URL);
         loadUser();
     }, [])
 
@@ -43,6 +43,7 @@ export const DProvider = (props) => {
             }
             return false;
         }else{
+            //make a call to server using token and fetch the detail to keep in context
             let user = {
                 name:"Tej Pratap",
                 role:"admin"

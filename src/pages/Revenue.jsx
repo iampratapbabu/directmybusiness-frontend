@@ -9,7 +9,7 @@ const Revenue = () => {
 
             <PageTitleAndSnackBar pageTitle="Revenue" />
 
-            <section class="section dashboard">
+            <section className="section dashboard">
                 <DataTable />
             </section>
 

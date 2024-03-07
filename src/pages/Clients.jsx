@@ -21,7 +21,7 @@ const Clients = () => {
             <PageTitleAndSnackBar pageTitle="Clients" />
 
 
-            <section class="section dashboard">
+            <section className="section dashboard">
             <DataTable />
             </section>
 
