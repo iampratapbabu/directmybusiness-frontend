@@ -8,7 +8,7 @@ const Sites = () => {
         <>
             <PageTitleAndSnackBar pageTitle="Sites" />
 
-            <section class="section dashboard">
+            <section className="section dashboard">
             <DataTable />
             </section>
 

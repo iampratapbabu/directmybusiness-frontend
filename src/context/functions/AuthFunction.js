@@ -37,7 +37,6 @@ export const register = async (signupData) => {
 
 export const logout = async () => {
     try {
-        console.log("logout")
         localStorage.removeItem('token');
     } catch (err) {
         console.log("logout [ERROR]", err)
