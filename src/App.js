@@ -14,6 +14,7 @@ import Leads from './pages/Leads';
 import Revenue from './pages/Revenue';
 import Faq from './pages/user/Faq';
 import Demopage from './pages/Demopage';
+import toast, { ToastBar, Toaster } from 'react-hot-toast';
 
 const App = () => {
 
@@ -28,7 +29,11 @@ const App = () => {
   const { user, ustate, isLoggedIn } = authState;
 
   useEffect(()=>{
-  
+    //toast('Here is your toast.');
+    //toast.success('Here is your toast.');
+    //toast.loading('Here is your toast.');
+    //toast.error('Here is your toast.');
+    //toast.custom('Here is your toast.');
 
   },[])
 
@@ -41,6 +46,7 @@ const App = () => {
 
   return (
     <>
+    <Toaster/>
     {/* {ustate}
     <button onClick={demoFun}>click</button> */}
       {
