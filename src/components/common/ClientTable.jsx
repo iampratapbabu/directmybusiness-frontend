@@ -1,9 +1,183 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react';
+import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
+import axios from 'axios';
+import toast from 'react-hot-toast';
+import { BASE_URL } from '../../config';
+import ContentLoader from '../loader/ContentLoader';
 
-const ClientTable = ({clientsArr}) => {
-  return (
-   <>
-      <>
+const ClientTable = ({ clientsArr }) => {
+
+    const [clientData, setClientData] = useState({
+        clientname: "",
+        mobile: "",
+        email: "",
+        phone1: "",
+        phone2: "",
+        address1: " ",
+        address2: "",
+        city: "",
+        state: "",
+        country: ""
+    })
+    const [clients, setClients] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [btnLoading, setBtnLoading] = useState(false);
+    const [btnMethod,setBtnMethod] = useState("create")
+    const [show, setShow] = useState(false);
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+
+    useEffect(()=>{
+        loadClients();
+    },[])
+
+    const loadClients = async () => {
+        try {
+            setLoading(true);
+            const axiosRes = await axios({
+                method: "GET",
+                //headers: { 'x-access-token': localStorage.getItem('token') },
+                url: `${BASE_URL}/construct/one/v1/clients`,
+                //data: { portfolioType: ptype }
+            });
+            console.log("loadClients [SUCCESS]", axiosRes.data);
+            if (axiosRes.data.success) {
+                setLoading(false);
+                setClients(axiosRes.data.resData);
+
+            } else {
+                console.log("loadClients [HANDLED ERROR]", axiosRes);
+                setLoading(false);
+                toast.error("Something went wrong " + axiosRes.data.message);
+            }
+        } catch (err) {
+            console.log("loadClient  [UNHANDLED ERROR]", err);
+            setLoading(false);
+            toast.error("Data Not Loaded " + err.message);
+
+        }
+
+    }
+
+
+    const toggleClientModal = (method,clientInfo) =>{
+        if(method === "create"){
+            setBtnMethod("create")
+            setClientData({});
+        }
+
+        if(method === "update"){
+            setBtnMethod("update");
+            setClientData(clientInfo);
+        }
+ 
+        setShow(true);
+   
+    }
+
+
+    const handleChange = (e) => {
+        setClientData({ ...clientData, [e.target.name]: e.target.value })
+    }
+
+    const handleSubmit = (e,) => {
+        e.preventDefault();
+        console.log(clientData);
+        if(btnMethod === "create") createClient();
+        if(btnMethod === "update") editClient();
+    }
+
+    const createClient = async() =>{
+        try {
+            setBtnLoading(true);
+            const axiosRes = await axios({
+                method: "POST",
+                //headers: { 'x-access-token': localStorage.getItem('token') },
+                url: `${BASE_URL}/construct/one/v1/clients`,
+                data: clientData
+            });
+            console.log("create client [SUCCESS]", axiosRes.data);
+            if (axiosRes.data.success) {
+                setBtnLoading(false);
+                setShow(false);
+                loadClients();
+
+            } else {
+                console.log("create client [HANDLED ERROR]", axiosRes);
+                setBtnLoading(false);
+                toast.error("Something went wrong " + axiosRes.data.message);
+            }
+        } catch (err) {
+            console.log("create client  [UNHANDLED ERROR]", err);
+            setBtnLoading(false);
+            toast.error("Data Not Loaded " + err.message);
+
+        }
+    }
+
+    const editClient = async() => {
+        try {
+            setBtnLoading(true);
+            const axiosRes = await axios({
+                method: "PATCH",
+                //headers: { 'x-access-token': localStorage.getItem('token') },
+                url: `${BASE_URL}/construct/one/v1/clients`,
+                data: clientData
+            });
+            console.log("editClient [SUCCESS]", axiosRes.data);
+            if (axiosRes.data.success) {
+                setBtnLoading(false);
+                setShow(false);
+                loadClients();
+
+            } else {
+                console.log("editClient [HANDLED ERROR]", axiosRes);
+                setBtnLoading(false);
+                toast.error("Client Info Not Updated " + axiosRes.data.message);
+            }
+        } catch (err) {
+            console.log("editClient  [UNHANDLED ERROR]", err);
+            setBtnLoading(false);
+            toast.error("Client Info Not Updated " + err.message);
+
+        }
+
+    }
+
+    const deleteClient = async(clientId) => {
+        console.log(clientData);
+        try {
+            toast("Removing Client")
+            const axiosRes = await axios({
+                method: "DELETE",
+                //headers: { 'x-access-token': localStorage.getItem('token') },
+                url: `${BASE_URL}/construct/one/v1/clients/${clientId}`,
+                //data: clientData
+            });
+            console.log("deleteClient [SUCCESS]", axiosRes.data);
+            if (axiosRes.data.success) {
+                toast.success("Client Removed")
+                loadClients();
+
+            } else {
+                console.log("deleteClient [HANDLED ERROR]", axiosRes);
+                toast.error("Something went wrong " + axiosRes.data.message);
+            }
+        } catch (err) {
+            console.log("deleteClient  [UNHANDLED ERROR]", err);
+            toast.error("Data Not Loaded " + err.message);
+
+        }
+
+
+
+    }
+
+
+    if(loading) return(<ContentLoader/>)
+    return (
+        <>
             <div className="row">
                 <div className="col-lg-12">
                     <div className="row">
@@ -12,8 +186,10 @@ const ClientTable = ({clientsArr}) => {
 
                                 <div className="card-body pb-0">
                                     <div className="d-flex align-items-center justify-content-between">
-                                        <h5 className="card-title">Total Clients : <span>{clientsArr.length} </span></h5>
-                                        <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#basicModal"><i className="bi bi-plus"></i> Add</button>
+                                        <h5 className="card-title">Total Clients : <span>{clients?.length} </span></h5>
+                                        <Button variant="primary" onClick={()=>toggleClientModal("create",null)}>
+                                            <i className="bi bi-plus"></i> Add
+                                        </Button>
                                     </div>
                                     <table id="myTable" className="table table-striped table-bordered table-hover table-checkable order-column valign-middle dataTable no-footer">
                                         <thead>
@@ -23,7 +199,7 @@ const ClientTable = ({clientsArr}) => {
                                                     className="bi bi-sort-up"></i></th>
                                                 <th className="sortingColumn" rowspan="1" colspan="1"> Mobile <i onclick="sortTable(4)"
                                                     className="bi bi-sort-up"></i></th>
-                                                <th className="sortingColumn" rowspan="1" colspan="1"> Email <i onclick="sortTable(5)"
+                                                <th className="sortingColumn" rowspan="1" colspan="1"> Status <i onclick="sortTable(5)"
                                                     className="bi bi-sort-up"></i></th>
                                                 <th className="sortingColumn" rowspan="1" colspan="1">Address <i onclick="sortTable(6)"
                                                     className="bi bi-sort-up"></i></th>
@@ -33,33 +209,33 @@ const ClientTable = ({clientsArr}) => {
                                         </thead>
                                         <tbody>
                                             {
-                                                clientsArr && clientsArr.map((client,idx)=>{
+                                                clients && clients.map((client, idx) => {
                                                     return (
                                                         <tr className="gradeX odd">
-                                                        <td className="patient-img sorting_1">
-                                                            <img src="./assets/images/user5.jpg" alt="" />
-                                                        </td>
-                                                     
-                                                        <td>{client?.clientname}</td>
-                                                        <td><a href="#">
-                                                            {client?.mobile} </a></td>
-                                                        <td><a href="#">
-                                                            john@gmail.com </a></td>
-                                                        <td className="left">{client?.address1},{client?.address2}</td>
-                                                        <td>
-                                                            <a href="#" className="tblEditBtn">
-                                                                <i className="bi bi-pencil-fill"></i>
-                                                            </a>
-                                                            <a className="tblDelBtn">
-                                                                <i className="bi bi-trash-fill"></i>
-                                                            </a>
-                                                        </td>
-                                                    </tr>
+                                                            <td className="patient-img sorting_1">
+                                                                <img src="./assets/images/user5.jpg" alt="" />
+                                                            </td>
+
+                                                            <td>{client?.clientname}</td>
+                                                            <td>
+                                                                {client?.mobile} </td>
+                                                            <td>
+                                                                {client?.status} </td>
+                                                            <td className="left">{client?.address1},{client?.address2}</td>
+                                                            <td>
+                                                                <Button className="tblEditBtn" onClick={()=>toggleClientModal("update",client)}>
+                                                                    <i className="bi bi-pencil-fill"></i>
+                                                                </Button>
+                                                                <Button className="tblDelBtn" onClick={()=>deleteClient(client?.clientid)}>
+                                                                    <i className="bi bi-trash-fill"></i>
+                                                                </Button>
+                                                            </td>
+                                                        </tr>
                                                     )
                                                 })
                                             }
-                                    
-                                       
+
+
                                         </tbody>
                                     </table>
                                     <div className="table-pagination">
@@ -93,9 +269,125 @@ const ClientTable = ({clientsArr}) => {
                     </div>
                 </div>
             </div>
+
+
+            <Modal show={show} onHide={handleClose}>
+                {/* <Modal.Header closeButton>
+                    <Modal.Title>Modal heading</Modal.Title>
+                </Modal.Header> */}
+                <Modal.Body>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header justify-content-center">
+                                <h4 className="modal-title fw-bold">Add Client</h4>
+                            </div>
+                            <div className="modal-body">
+                                <form className="row g-3" onSubmit={handleSubmit}>
+                                    <div className="col-md-12">
+                                        <div className="form-floating">
+                                            <input type="text" className="form-control" id="floatingName" placeholder="Your Name" name="clientname" onChange={handleChange} value={clientData?.clientname || ""} />
+                                            <label for="floatingName">Name</label>
+                                        </div>
+                                    </div>
+                                    <div className="col-md-6">
+                                        <div className="form-floating">
+                                            <input type="email" className="form-control" id="floatingEmail" placeholder="Your Email" name="email" onChange={handleChange} value={clientData?.email || ""} />
+                                            <label for="floatingEmail">Email</label>
+                                        </div>
+                                    </div>
+                                    <div className="col-md-6">
+                                        <div className="form-floating">
+                                            <input type="text" className="form-control" id="floatingPassword" placeholder="Moile" name="mobile" onChange={handleChange} value={clientData?.mobile || ""} />
+                                            <label for="floatingPassword">Mobile</label>
+                                        </div>
+                                    </div>
+                                    <div className="col-12">
+                                        <div className="form-floating">
+                                            <textarea className="form-control" placeholder="Address" id="floatingTextarea" rows="4" name="address1" onChange={handleChange} value={clientData?.address1 || ""}></textarea>
+                                            <label for="floatingTextarea">Address Line 1</label>
+                                        </div>
+                                    </div>
+                                    <div className="col-12">
+                                        <div className="form-floating">
+                                            <textarea className="form-control" placeholder="Address" id="floatingTextarea" rows="4" name="address2" onChange={handleChange} value={clientData?.address2 || ""}></textarea>
+                                            <label for="floatingTextarea">Address Line 2</label>
+                                        </div>
+                                    </div>
+                                    <div className="col-md-4">
+                                        <div className="col-md-12">
+                                            <div className="form-floating">
+                                                <input type="text" className="form-control" id="floatingCity" placeholder="City" name="city" onChange={handleChange} value={clientData?.city || ""} />
+                                                <label for="floatingCity">City</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="col-md-4">
+                                        <div className="form-floating mb-3">
+                                            <select className="form-select" id="floatingSelect" aria-label="State" name="state" onChange={handleChange} value={clientData?.state || ""}>
+                                                <option value="Orissa">Orissa</option>
+                                                <option value="Goa">Goa</option>
+                                                <option value="Pune">Pune</option>
+                                                <option value="Delhi">Delhi</option>
+                                                <option value="Mumbai">Mumbai</option>
+                                            </select>
+                                            <label for="floatingSelect">State</label>
+                                        </div>
+                                    </div>
+                                    <div className="col-md-4">
+                                        <div className="form-floating mb-3">
+                                            <select className="form-select" id="floatingSelect" aria-label="State" name="country" onChange={handleChange} value={clientData?.country || ""}>
+                                                <option value="India">India</option>
+                                                <option value="Dubai">Dubai</option>
+                                                <option value="America">America</option>
+                                                <option value="Russia">Russia</option>
+                                            </select>
+                                            <label for="floatingSelect">Country</label>
+                                        </div>
+                                    </div>
+                                    {/* <div className="col-md-4">
+                                        <input className="form-check-input" type="radio"
+                                            name="employment_status"
+                                            value="unemployed"
+                                            onChange={handleChange}
+                                            checked={tenantProfile?.employment_status == "unemployed" ? true : false}
+                                        />
+                                        <label className="form-check-label" >
+                                            Unemployed
+                                        </label>
+                                    </div> */}
+                                    <div className="text-center modal-footer pt-4">
+                                        <Button variant="danger" onClick={handleClose}>
+                                            Close
+                                        </Button>
+                                        {
+                                            btnLoading ?
+                                                <Button variant="primary" type="submit" disabled="true">
+                                                    Saving...
+                                                </Button>
+                                                :
+                                                <Button variant="primary" type="submit">
+                                                    Save Changes
+                                                </Button>
+
+                                        }
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </Modal.Body>
+                {/* <Modal.Footer>
+                    <Button variant="secondary" onClick={handleClose}>
+                        Close
+                    </Button>
+                    <Button variant="primary" onClick={handleClose}>
+                        Save Changes
+                    </Button>
+                </Modal.Footer> */}
+            </Modal>
+
         </>
-   </>
-  )
+    )
 }
 
 export default ClientTable
