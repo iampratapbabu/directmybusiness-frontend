@@ -5,6 +5,9 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import { BASE_URL } from '../../config';
 import ContentLoader from '../loader/ContentLoader';
+import { Link } from 'react-router-dom';
+import { countriesData, statesData } from '../../helper/AdditionalData';
+import {SOMETHING_WENT_WRONG} from '../../constants/strings';
 
 const ClientTable = ({ clientsArr }) => {
 
@@ -23,16 +26,16 @@ const ClientTable = ({ clientsArr }) => {
     const [clients, setClients] = useState([]);
     const [loading, setLoading] = useState(false);
     const [btnLoading, setBtnLoading] = useState(false);
-    const [btnMethod,setBtnMethod] = useState("create")
+    const [btnMethod, setBtnMethod] = useState("create")
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
-    useEffect(()=>{
+    useEffect(() => {
         loadClients();
-    },[])
+    }, [])
 
-    const loadClients = async () => {
+    const loadClients = async() => {
         try {
             setLoading(true);
             const axiosRes = await axios({
@@ -42,38 +45,35 @@ const ClientTable = ({ clientsArr }) => {
                 //data: { portfolioType: ptype }
             });
             console.log("loadClients [SUCCESS]", axiosRes.data);
-            if (axiosRes.data.success) {
+            if (axiosRes.data.statusCode === 200) {
                 setLoading(false);
                 setClients(axiosRes.data.resData);
-
             } else {
                 console.log("loadClients [HANDLED ERROR]", axiosRes);
                 setLoading(false);
-                toast.error("Something went wrong " + axiosRes.data.message);
+                toast.error(axiosRes.data.message);
             }
         } catch (err) {
             console.log("loadClient  [UNHANDLED ERROR]", err);
             setLoading(false);
-            toast.error("Data Not Loaded " + err.message);
+            toast.error(SOMETHING_WENT_WRONG);
 
         }
 
     }
 
 
-    const toggleClientModal = (method,clientInfo) =>{
-        if(method === "create"){
+    const toggleClientModal = (method, clientInfo) => {
+        if (method === "create") {
             setBtnMethod("create")
             setClientData({});
         }
 
-        if(method === "update"){
+        if (method === "update") {
             setBtnMethod("update");
             setClientData(clientInfo);
         }
- 
         setShow(true);
-   
     }
 
 
@@ -84,11 +84,11 @@ const ClientTable = ({ clientsArr }) => {
     const handleSubmit = (e,) => {
         e.preventDefault();
         console.log(clientData);
-        if(btnMethod === "create") createClient();
-        if(btnMethod === "update") editClient();
+        if (btnMethod === "create") createClient();
+        if (btnMethod === "update") editClient();
     }
 
-    const createClient = async() =>{
+    const createClient = async () => {
         try {
             setBtnLoading(true);
             const axiosRes = await axios({
@@ -98,7 +98,7 @@ const ClientTable = ({ clientsArr }) => {
                 data: clientData
             });
             console.log("create client [SUCCESS]", axiosRes.data);
-            if (axiosRes.data.success) {
+            if (axiosRes.data.statusCode === 200) {
                 setBtnLoading(false);
                 setShow(false);
                 loadClients();
@@ -111,12 +111,12 @@ const ClientTable = ({ clientsArr }) => {
         } catch (err) {
             console.log("create client  [UNHANDLED ERROR]", err);
             setBtnLoading(false);
-            toast.error("Data Not Loaded " + err.message);
+            toast.error(SOMETHING_WENT_WRONG);
 
         }
     }
 
-    const editClient = async() => {
+    const editClient = async () => {
         try {
             setBtnLoading(true);
             const axiosRes = await axios({
@@ -126,26 +126,27 @@ const ClientTable = ({ clientsArr }) => {
                 data: clientData
             });
             console.log("editClient [SUCCESS]", axiosRes.data);
-            if (axiosRes.data.success) {
+            if (axiosRes.data.statusCode === 200) {
                 setBtnLoading(false);
                 setShow(false);
+                toast.success(axiosRes.data.message);
                 loadClients();
 
             } else {
                 console.log("editClient [HANDLED ERROR]", axiosRes);
                 setBtnLoading(false);
-                toast.error("Client Info Not Updated " + axiosRes.data.message);
+                toast.error(axiosRes.data.message);
             }
         } catch (err) {
             console.log("editClient  [UNHANDLED ERROR]", err);
             setBtnLoading(false);
-            toast.error("Client Info Not Updated " + err.message);
+            toast.error(SOMETHING_WENT_WRONG);
 
         }
 
     }
 
-    const deleteClient = async(clientId) => {
+    const deleteClient = async (clientId) => {
         console.log(clientData);
         try {
             toast("Removing Client")
@@ -157,25 +158,22 @@ const ClientTable = ({ clientsArr }) => {
             });
             console.log("deleteClient [SUCCESS]", axiosRes.data);
             if (axiosRes.data.success) {
-                toast.success("Client Removed")
+                toast.success("Client Removed");
                 loadClients();
 
             } else {
                 console.log("deleteClient [HANDLED ERROR]", axiosRes);
-                toast.error("Something went wrong " + axiosRes.data.message);
+                toast.error(axiosRes.data.message);
             }
         } catch (err) {
             console.log("deleteClient  [UNHANDLED ERROR]", err);
-            toast.error("Data Not Loaded " + err.message);
+            toast.error(SOMETHING_WENT_WRONG);
 
         }
-
-
 
     }
 
 
-    if(loading) return(<ContentLoader/>)
     return (
         <>
             <div className="row">
@@ -187,57 +185,63 @@ const ClientTable = ({ clientsArr }) => {
                                 <div className="card-body pb-0">
                                     <div className="d-flex align-items-center justify-content-between">
                                         <h5 className="card-title">Total Clients : <span>{clients?.length} </span></h5>
-                                        <Button variant="primary" onClick={()=>toggleClientModal("create",null)}>
+                                        <Button variant="primary" onClick={() => toggleClientModal("create", null)}>
                                             <i className="bi bi-plus"></i> Add
                                         </Button>
                                     </div>
-                                    <table id="myTable" className="table table-striped table-bordered table-hover table-checkable order-column valign-middle dataTable no-footer">
-                                        <thead>
-                                            <tr>
-                                                <th className="sorting" rowspan="1" colspan="1" style={{ width: "40px" }}></th>
-                                                <th className="sortingColumn" rowspan="1" colspan="1"> Name <i onclick="sortTable(2)"
-                                                    className="bi bi-sort-up"></i></th>
-                                                <th className="sortingColumn" rowspan="1" colspan="1"> Mobile <i onclick="sortTable(4)"
-                                                    className="bi bi-sort-up"></i></th>
-                                                <th className="sortingColumn" rowspan="1" colspan="1"> Status <i onclick="sortTable(5)"
-                                                    className="bi bi-sort-up"></i></th>
-                                                <th className="sortingColumn" rowspan="1" colspan="1">Address <i onclick="sortTable(6)"
-                                                    className="bi bi-sort-up"></i></th>
-                                                <th className="sortingColumn" rowspan="1" colspan="1"> Action <i onclick="sortTable(7)"
-                                                    className="bi bi-sort-up"></i></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {
-                                                clients && clients.map((client, idx) => {
-                                                    return (
-                                                        <tr className="gradeX odd">
-                                                            <td className="patient-img sorting_1">
-                                                                <img src="./assets/images/user5.jpg" alt="" />
-                                                            </td>
-
-                                                            <td>{client?.clientname}</td>
-                                                            <td>
-                                                                {client?.mobile} </td>
-                                                            <td>
-                                                                {client?.status} </td>
-                                                            <td className="left">{client?.address1},{client?.address2}</td>
-                                                            <td>
-                                                                <Button className="tblEditBtn" onClick={()=>toggleClientModal("update",client)}>
-                                                                    <i className="bi bi-pencil-fill"></i>
-                                                                </Button>
-                                                                <Button className="tblDelBtn" onClick={()=>deleteClient(client?.clientid)}>
-                                                                    <i className="bi bi-trash-fill"></i>
-                                                                </Button>
-                                                            </td>
+                                    {
+                                        loading ? <ContentLoader /> :
+                                            <>
+                                                <table id="myTable" className="table table-striped table-bordered table-hover table-checkable order-column valign-middle dataTable no-footer">
+                                                    <thead>
+                                                        <tr>
+                                                            <th className="sorting" rowspan="1" colspan="1" style={{ width: "40px" }}></th>
+                                                            <th className="sortingColumn" rowspan="1" colspan="1"> Name <i onclick="sortTable(2)"
+                                                                className="bi bi-sort-up"></i></th>
+                                                            <th className="sortingColumn" rowspan="1" colspan="1"> Mobile <i onclick="sortTable(4)"
+                                                                className="bi bi-sort-up"></i></th>
+                                                            <th className="sortingColumn" rowspan="1" colspan="1"> Status <i onclick="sortTable(5)"
+                                                                className="bi bi-sort-up"></i></th>
+                                                            <th className="sortingColumn" rowspan="1" colspan="1">Address <i onclick="sortTable(6)"
+                                                                className="bi bi-sort-up"></i></th>
+                                                            <th className="sortingColumn" rowspan="1" colspan="1"> Action <i onclick="sortTable(7)"
+                                                                className="bi bi-sort-up"></i></th>
                                                         </tr>
-                                                    )
-                                                })
-                                            }
+                                                    </thead>
+                                                    <tbody>
+                                                        {
+                                                            clients && clients.map((client, idx) => {
+                                                                return (
+                                                                    <tr className="gradeX odd">
+                                                                        <td className="patient-img sorting_1">
+                                                                            {/* <img src="./assets/images/user5.jpg" alt="" /> */}
+                                                                        </td>
+
+                                                                        <td>{client?.clientname}</td>
+                                                                        <td>
+                                                                            {client?.mobile} </td>
+                                                                        <td>
+                                                                            {client?.status} </td>
+                                                                        <td className="left">{client?.address1},{client?.address2}</td>
+                                                                        <td>
+                                                                            <Link className="tblEditBtn" onClick={() => toggleClientModal("update", client)}>
+                                                                                <i className="bi bi-pencil-fill"></i>
+                                                                            </Link>
+                                                                            <Link className="tblDelBtn" onClick={() => deleteClient(client?.clientid)}>
+                                                                                <i className="bi bi-trash-fill"></i>
+                                                                            </Link>
+                                                                        </td>
+                                                                    </tr>
+                                                                )
+                                                            })
+                                                        }
 
 
-                                        </tbody>
-                                    </table>
+                                                    </tbody>
+                                                </table>
+                                            </>
+                                    }
+
                                     <div className="table-pagination">
                                         <div className="dataTables_info" role="status" aria-live="polite">Showing 11 to 18 of 18 entries</div>
                                         <div className="dataTables_paginate paging_simple_numbers">
@@ -279,7 +283,7 @@ const ClientTable = ({ clientsArr }) => {
                     <div className="modal-dialog">
                         <div className="modal-content">
                             <div className="modal-header justify-content-center">
-                                <h4 className="modal-title fw-bold">Add Client</h4>
+                                <h4 className="modal-title fw-bold">{btnMethod == "create" ? <>Add Client</> : <>Edit Client</>}</h4>
                             </div>
                             <div className="modal-body">
                                 <form className="row g-3" onSubmit={handleSubmit}>
@@ -324,11 +328,16 @@ const ClientTable = ({ clientsArr }) => {
                                     <div className="col-md-4">
                                         <div className="form-floating mb-3">
                                             <select className="form-select" id="floatingSelect" aria-label="State" name="state" onChange={handleChange} value={clientData?.state || ""}>
-                                                <option value="Orissa">Orissa</option>
+                                                {/* <option value="Orissa">Orissa</option>
                                                 <option value="Goa">Goa</option>
                                                 <option value="Pune">Pune</option>
                                                 <option value="Delhi">Delhi</option>
-                                                <option value="Mumbai">Mumbai</option>
+                                                <option value="Mumbai">Mumbai</option> */}
+                                                {
+                                                    statesData.map((singleState, idx) => (
+                                                        <option value={singleState?.state}>{singleState?.state}</option>
+                                                    ))
+                                                }
                                             </select>
                                             <label for="floatingSelect">State</label>
                                         </div>
@@ -336,10 +345,11 @@ const ClientTable = ({ clientsArr }) => {
                                     <div className="col-md-4">
                                         <div className="form-floating mb-3">
                                             <select className="form-select" id="floatingSelect" aria-label="State" name="country" onChange={handleChange} value={clientData?.country || ""}>
-                                                <option value="India">India</option>
-                                                <option value="Dubai">Dubai</option>
-                                                <option value="America">America</option>
-                                                <option value="Russia">Russia</option>
+                                                {
+                                                    countriesData.map((country, idx) => (
+                                                        <option value={country?.country}>{country?.country}</option>
+                                                    ))
+                                                }
                                             </select>
                                             <label for="floatingSelect">Country</label>
                                         </div>

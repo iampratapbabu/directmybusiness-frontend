@@ -42,12 +42,12 @@ const Clients = () => {
             } else {
                 console.log("loadClients [HANDLED ERROR]", axiosRes);
                 setLoading(false);
-                toast.error("Something went wrong " + axiosRes.data.message);
+                toast.error(axiosRes.data.message);
             }
         } catch (err) {
             console.log("loadClient  [UNHANDLED ERROR]", err);
             setLoading(false);
-            toast.error("Data Not Loaded " + err.message);
+            toast.error("Something Went Wrong " + err.message);
 
         }
 
