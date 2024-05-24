@@ -9,7 +9,7 @@ const Homepage = () => {
   const location = useLocation();
   let { q } = useParams();
 
- //we can access window object directly in react
+  //we can access window object directly in react
   const url = window.location.href;
   const pathname = window.location.pathname;
   const protocol = window.location.protocol;
@@ -182,7 +182,7 @@ const Homepage = () => {
                 </Link>
               </div>
 
-              <div className="col-xxl-3 col-xl-12">
+              <div className="col-xxl-3 col-xl-6">
                 <Link to="/clients">
                   <div className="card info-card customers-card">
 
@@ -219,21 +219,26 @@ const Homepage = () => {
                 </Link>
               </div>
 
+              <div className="col-xxl-7 col-xl-12">
+                <Chart
+                  options={chartstate.options}
+                  series={chartstate.series}
+                  type="line"
+                  width="500"
+                />
 
-              <Chart
-                options={chartstate.options}
-                series={chartstate.series}
-                type="line"
-                width="700"
-              />
+              </div>
+
+              <div className="col-xxl-5 col-xl-12">
+                <Chart options={piechart.options}
+                  series={piechart.series}
+                  type="donut"
+                  width="400"
+                />
+              </div>
 
 
 
-              <Chart options={piechart.options}
-                series={piechart.series}
-                type="donut"
-                width="400"
-              />
 
 
             </div>
