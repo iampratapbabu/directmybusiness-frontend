@@ -7,7 +7,7 @@ import { BASE_URL } from '../../config';
 import ContentLoader from '../loader/ContentLoader';
 import { Link } from 'react-router-dom';
 import { countriesData, statesData } from '../../helper/AdditionalData';
-import {SOMETHING_WENT_WRONG} from '../../constants/strings';
+import { SOMETHING_WENT_WRONG } from '../../constants/strings';
 
 const ClientTable = ({ clientsArr }) => {
 
@@ -24,7 +24,7 @@ const ClientTable = ({ clientsArr }) => {
         country: ""
     })
     const [clients, setClients] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [btnLoading, setBtnLoading] = useState(false);
     const [btnMethod, setBtnMethod] = useState("create")
     const [show, setShow] = useState(false);
@@ -35,7 +35,7 @@ const ClientTable = ({ clientsArr }) => {
         loadClients();
     }, [])
 
-    const loadClients = async() => {
+    const loadClients = async () => {
         try {
             setLoading(true);
             const axiosRes = await axios({
@@ -101,12 +101,13 @@ const ClientTable = ({ clientsArr }) => {
             if (axiosRes.data.statusCode === 200) {
                 setBtnLoading(false);
                 setShow(false);
+                toast.success(axiosRes.data.message);
                 loadClients();
 
             } else {
                 console.log("create client [HANDLED ERROR]", axiosRes);
                 setBtnLoading(false);
-                toast.error("Something went wrong " + axiosRes.data.message);
+                toast.error(axiosRes.data.message);
             }
         } catch (err) {
             console.log("create client  [UNHANDLED ERROR]", err);
@@ -149,7 +150,7 @@ const ClientTable = ({ clientsArr }) => {
     const deleteClient = async (clientId) => {
         console.log(clientData);
         try {
-            toast("Removing Client")
+            toast("Changing Client status")
             const axiosRes = await axios({
                 method: "DELETE",
                 //headers: { 'x-access-token': localStorage.getItem('token') },
@@ -157,8 +158,8 @@ const ClientTable = ({ clientsArr }) => {
                 //data: clientData
             });
             console.log("deleteClient [SUCCESS]", axiosRes.data);
-            if (axiosRes.data.success) {
-                toast.success("Client Removed");
+            if (axiosRes.data.statusCode === 200) {
+                toast.success(axiosRes.data.message);
                 loadClients();
 
             } else {
@@ -227,9 +228,22 @@ const ClientTable = ({ clientsArr }) => {
                                                                             <Link className="tblEditBtn" onClick={() => toggleClientModal("update", client)}>
                                                                                 <i className="bi bi-pencil-fill"></i>
                                                                             </Link>
-                                                                            <Link className="tblDelBtn" onClick={() => deleteClient(client?.clientid)}>
-                                                                                <i className="bi bi-trash-fill"></i>
-                                                                            </Link>
+                                                                            {
+                                                                                client.status === "ACTIVE" ?
+                                                                                    <>
+                                                                                        <Link className="tblDelBtn" onClick={() => deleteClient(client?.clientid)}>
+                                                                                            <i className="bi bi-trash-fill"></i>
+                                                                                        </Link>
+                                                                                    </>
+                                                                                    :
+                                                                                    <>
+                                                                                        <Link className="tblActiveBtn" onClick={() => deleteClient(client?.clientid)}>
+                                                                                            <i className="bi bi-person-bounding-box"></i>
+                                                                                        </Link>
+                                                                                    </>
+                                                                            }
+
+
                                                                         </td>
                                                                     </tr>
                                                                 )
@@ -345,10 +359,11 @@ const ClientTable = ({ clientsArr }) => {
                                     <div className="col-md-4">
                                         <div className="form-floating mb-3">
                                             <select className="form-select" id="floatingSelect" aria-label="State" name="country" onChange={handleChange} value={clientData?.country || ""}>
+                                                <option value={"India"}>{"India"}</option>
                                                 {
-                                                    countriesData.map((country, idx) => (
-                                                        <option value={country?.country}>{country?.country}</option>
-                                                    ))
+                                                    // countriesData.map((country, idx) => (
+                                                    //     <option value={country?.country}>{country?.country}</option>
+                                                    // ))
                                                 }
                                             </select>
                                             <label for="floatingSelect">Country</label>
