@@ -9,6 +9,7 @@ import { Link } from 'react-router-dom';
 import { countriesData, statesData } from '../../helper/AdditionalData';
 import { SOMETHING_WENT_WRONG } from '../../constants/strings';
 
+
 const ClientTable = ({ clientsArr }) => {
 
     const [clientData, setClientData] = useState({
