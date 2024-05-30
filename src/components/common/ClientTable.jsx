@@ -31,18 +31,24 @@ const ClientTable = ({ clientsArr }) => {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+    const [sizeable,setSizeable] = useState({
+        page:1,
+        limit:10
+    });
+
+ 
 
     useEffect(() => {
         loadClients();
     }, [])
 
-    const loadClients = async () => {
+    const loadClients = async (page=1,limit=10) => {
         try {
             setLoading(true);
             const axiosRes = await axios({
                 method: "GET",
                 //headers: { 'x-access-token': localStorage.getItem('token') },
-                url: `${BASE_URL}/construct/one/v1/clients`,
+                url: `${BASE_URL}/construct/one/v1/clients?page=${page}&limit=${limit}`,
                 //data: { portfolioType: ptype }
             });
             console.log("loadClients [SUCCESS]", axiosRes.data);
@@ -63,7 +69,6 @@ const ClientTable = ({ clientsArr }) => {
 
     }
 
-
     const toggleClientModal = (method, clientInfo) => {
         if (method === "create") {
             setBtnMethod("create")
@@ -75,6 +80,32 @@ const ClientTable = ({ clientsArr }) => {
             setClientData(clientInfo);
         }
         setShow(true);
+    }
+
+    const changeSizeable = (userAction) =>{
+        if(userAction === "prev"){
+            if(sizeable.page <= 1)  {toast("You are already on Page 1");}
+            else{
+                let prevPage = --sizeable.page;
+                setSizeable({...sizeable,page:prevPage});
+                loadClients(prevPage,sizeable.limit);
+            }
+    
+        }
+
+        if(userAction === "next"){
+            let nextPage = ++sizeable.page;
+            setSizeable({...sizeable,page:nextPage});
+            loadClients(nextPage,sizeable.limit);
+
+        }
+
+    }
+    
+    const changeLimit = (e) =>{
+        console.log(e.target.value);
+        setSizeable({...sizeable,limit:e.target.value});
+        loadClients(sizeable.page,e.target.value);
     }
 
 
@@ -186,7 +217,7 @@ const ClientTable = ({ clientsArr }) => {
 
                                 <div className="card-body pb-0">
                                     <div className="d-flex align-items-center justify-content-between">
-                                        <h5 className="card-title">Total Clients : <span>{clients?.length} </span></h5>
+                                        <h5 className="card-title"> <span></span></h5>
                                         <Button variant="primary" onClick={() => toggleClientModal("create", null)}>
                                             <i className="bi bi-plus"></i> Add
                                         </Button>
@@ -244,7 +275,6 @@ const ClientTable = ({ clientsArr }) => {
                                                                                     </>
                                                                             }
 
-
                                                                         </td>
                                                                     </tr>
                                                                 )
@@ -258,26 +288,36 @@ const ClientTable = ({ clientsArr }) => {
                                     }
 
                                     <div className="table-pagination">
-                                        <div className="dataTables_info" role="status" aria-live="polite">Showing 11 to 18 of 18 entries</div>
+                                        <div className="dataTables_info" role="status" aria-live="polite">
+                                            Limit {      
+                                            <select onChange={changeLimit}>
+                                                <option value="10">10</option>
+                                                <option value="20">20</option>
+                                                <option value="30">30</option>
+                                                <option value="40">40</option>
+                                                <option value="50">50</option>
+                                             </select>
+                                             }Entries</div>
+                                  
                                         <div className="dataTables_paginate paging_simple_numbers">
                                             <ul className="pagination">
                                                 <li className="paginate_button page-item previous">
-                                                    <a href="javascript:void(0)" aria-controls="example4" data-dt-idx="0" tabindex="0" className="page-link">Previous</a>
+                                                    <button onClick={()=>changeSizeable("prev")} className="page-link">Previous</button>
                                                 </li>
-                                                <li className="paginate_button page-item ">
+                                                {/* <li className="paginate_button page-item ">
                                                     <a href="javascript:void(0)" aria-controls="example4" data-dt-idx="1" tabindex="0" className="page-link">
                                                         1
                                                     </a>
-                                                </li>
+                                                </li> */}
                                                 <li className="paginate_button page-item active">
-                                                    <a href="javascript:void(0)" aria-controls="example4" data-dt-idx="2" tabindex="0" className="page-link">
-                                                        2
-                                                    </a>
+                                                    <button className="page-link">
+                                                        {sizeable.page}
+                                                    </button>
                                                 </li>
-                                                <li className="paginate_button page-item next disabled" id="example4_next">
-                                                    <a href="javascript:void(0)" aria-controls="example4" data-dt-idx="3" tabindex="0" className="page-link">
+                                                <li className="paginate_button page-item next" id="example4_next">
+                                                    <button onClick={()=>changeSizeable("next")} className="page-link">
                                                         Next
-                                                    </a>
+                                                    </button>
                                                 </li>
                                             </ul>
                                         </div>
