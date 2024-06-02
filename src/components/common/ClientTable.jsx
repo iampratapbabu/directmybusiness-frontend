@@ -110,7 +110,7 @@ const ClientTable = ({ clientsArr }) => {
 
 
     const handleChange = (e) => {
-        setClientData({ ...clientData, [e.target.name]: e.target.value })
+        setClientData({ ...clientData, [e.target.name]: e.target.value });
     }
 
     const handleSubmit = (e,) => {
@@ -123,6 +123,8 @@ const ClientTable = ({ clientsArr }) => {
     const createClient = async () => {
         try {
             setBtnLoading(true);
+            clientData.country = "India";
+
             const axiosRes = await axios({
                 method: "POST",
                 //headers: { 'x-access-token': localStorage.getItem('token') },
@@ -152,6 +154,8 @@ const ClientTable = ({ clientsArr }) => {
     const editClient = async () => {
         try {
             setBtnLoading(true);
+            clientData.country = "India";
+
             const axiosRes = await axios({
                 method: "PATCH",
                 //headers: { 'x-access-token': localStorage.getItem('token') },

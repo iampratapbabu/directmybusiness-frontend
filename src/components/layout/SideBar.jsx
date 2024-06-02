@@ -36,6 +36,13 @@ const SideBar = () => {
                     </li>
 
                     <li className="nav-item">
+                        <Link to="/sites" className={getClassName("/sites")}>
+                            <i className="bi bi-kanban"></i>
+                            <span>Sites</span>
+                        </Link>
+                    </li>
+
+                    <li className="nav-item">
                         <Link to="/projects" className={getClassName("/projects")}>
                             <i className="bi bi-house-gear"></i> 
                             {/* use bi bi-house-gear-fill to fill the icon */}
@@ -43,12 +50,6 @@ const SideBar = () => {
                         </Link>
                     </li>
 
-                    <li className="nav-item">
-                        <Link to="/sites" className={getClassName("/sites")}>
-                            <i className="bi bi-kanban"></i>
-                            <span>Sites</span>
-                        </Link>
-                    </li>
 
                     <li className="nav-item">
                         <Link to="/revenue" className={getClassName("/revenue")}>
